@@ -1,0 +1,6 @@
+node_modules
+dist
+.next
+*.log
+documenso/.env
+documenso/certs/

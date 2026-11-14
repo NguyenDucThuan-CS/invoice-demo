@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>User story — Duyệt hóa đơn INV-9001</title>
+  <style>
+    :root {
+      --green: #008738;
+      --green-dark: #005826;
+      --green-soft: #e8f6ee;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --paper: #ffffff;
+      --bg: #f4f7f5;
+      --wheat: #fff8e8;
+      --danger: #b42318;
+      --danger-bg: #fee2e2;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      font-size: 17px;
+      line-height: 1.6;
+    }
+
+    main {
+      width: min(920px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 72px;
+    }
+
+    header.hero {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 28px 28px 22px;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.05);
+    }
+
+    .kicker {
+      margin: 0 0 8px;
+      color: var(--green);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 2rem;
+      letter-spacing: -0.03em;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin: 40px 0 10px;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    h3 { margin: 22px 0 8px; font-size: 1.05rem; }
+
+    p { margin: 0 0 12px; }
+
+    .lede { color: var(--muted); max-width: 42rem; }
+
+    .pills { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; padding: 0; list-style: none; }
+    .pills li {
+      background: var(--green-soft);
+      color: var(--green-dark);
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px 24px 8px;
+      margin-top: 16px;
+    }
+
+    .diagram {
+      background: #fbfefc;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 8px;
+      margin: 8px 0 18px;
+      overflow-x: auto;
+    }
+
+    ol.steps { margin: 0 0 16px; padding-left: 1.2rem; }
+    ol.steps li { margin: 0 0 8px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 18px;
+      font-size: 0.95rem;
+    }
+
+    th, td {
+      text-align: left;
+      vertical-align: top;
+      border-bottom: 1px solid var(--line);
+      padding: 8px 10px 8px 0;
+    }
+
+    th { color: var(--muted); font-weight: 600; font-size: 0.8rem; }
+
+    code {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+      font-size: 0.86em;
+      background: #f1f5f9;
+      border-radius: 6px;
+      padding: 1px 5px;
+    }
+
+    .note {
+      background: var(--wheat);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 0 0 16px;
+    }
+
+    .warn {
+      background: var(--danger-bg);
+      color: var(--danger);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 0 0 16px;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header class="hero">
+      <p class="kicker">User story đầu cuối</p>
+      <h1>Duyệt hóa đơn INV-9001</h1>
+      <p class="lede">Một kế toán nhận hóa đơn phần mềm, duyệt, rồi ghi mã chuyển khoản. Quy tắc rẽ nhánh nằm trong file BPMN trên Operaton. Kế toán chỉ thao tác trên Next.js.</p>
+      <ul class="pills">
+        <li>Hồ sơ INV-9001</li>
+        <li>Acme GmbH · 2.500 · phần mềm</li>
+        <li>Next.js :3000</li>
+        <li>NestJS :3001</li>
+        <li>Operaton :8080</li>
+      </ul>
+    </header>
+
+    <section>
+      <h2>1. Vấn đề</h2>
+      <p>Công ty nhận hóa đơn nhà cung cấp. Cần biết hồ sơ đang chờ duyệt, đã bị từ chối, hay đã ghi nhận chuyển khoản. Nếu viết điều kiện này trong Next.js, mỗi quy trình mới lại phải sửa code. Operaton giữ thứ tự bước và quyết định bước tiếp theo. Next.js chỉ hiện form và gửi lựa chọn của người dùng.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+  HoaDon["Hóa đơn Acme<br/>INV-9001 · 2.500"] --> VanDe["Ai duyệt?<br/>Duyệt rồi đi đâu?"]
+  VanDe --> BPMN["Quy tắc nằm trong<br/>invoice-receipt.bpmn"]
+  BPMN --> KetQua["Đã thanh toán<br/>hoặc Từ chối"]
+        </pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>2. Hai người, hai màn hình</h2>
+      <p>Người thiết kế quy trình làm việc với file BPMN và Operaton. Kế toán, tài khoản <code>demo</code>, chỉ dùng Next.js. Cả hai nhìn cùng một hồ sơ vì NestJS đọc Operaton, và Operaton lưu PostgreSQL.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+  TK["Người thiết kế"] --> CM["Camunda Modeler"]
+  CM --> File["invoice-receipt.bpmn"]
+  File --> Op["Operaton :8080"]
+  KT["Kế toán demo"] --> Web["Next.js :3000"]
+  Web --> Api["NestJS :3001"]
+  Api --> Op
+  Op --> DB[("PostgreSQL<br/>các bảng act_*")]
+        </pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>3. Cách sử dụng Operaton từ đầu đến cuối</h2>
+      <p>Dùng Operaton là vẽ quy trình một lần, deploy lên engine, rồi mỗi hóa đơn đi lần lượt qua các bước trong sơ đồ. Engine chọn bước tiếp theo. Người dùng chỉ hoàn thành việc đang được giao. Đăng nhập Operaton bằng <code>demo</code> / <code>demo</code> tại http://localhost:8080/. Kế toán làm các bước 3 đến 6 trên Next.js tại http://localhost:3000/.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart TD
+  A["1. Vẽ quy trình<br/>Camunda Modeler"] --> B["2. Deploy<br/>Operaton lưu XML"]
+  B --> C["3. Mở hồ sơ<br/>mỗi hóa đơn là một lần chạy"]
+  C --> D["4. Làm việc được giao<br/>Approve invoice"]
+  D --> E["5. Engine tự rẽ<br/>theo biến approved"]
+  E --> F["6. Kết thúc<br/>Invoice paid hoặc Invoice rejected"]
+  F --> G["Xem lại trên Next.js<br/>và Cockpit Operaton"]
+        </pre>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Bước</th><th>Chỗ thao tác</th><th>Operaton làm gì</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1. Vẽ quy trình</td>
+            <td>Camunda Modeler, file <code>invoice-receipt.bpmn</code></td>
+            <td>Chưa chạy gì. File mới là bản thiết kế: form, việc duyệt giao cho demo, nhánh <code>${approved}</code>, việc ghi mã chuyển khoản.</td>
+          </tr>
+          <tr>
+            <td>2. Deploy</td>
+            <td>Operaton, cổng 8080. Xem ở Deployments và Processes.</td>
+            <td>Lưu XML vào PostgreSQL và đăng ký quy trình <code>invoiceReceipt</code>. Engine biết thứ tự các bước.</td>
+          </tr>
+          <tr>
+            <td>3. Mở hồ sơ</td>
+            <td>Next.js, chọn deployment <code>invoice-receipt</code>, bấm Mở hồ sơ.</td>
+            <td>Tạo một lần chạy, lưu biến hóa đơn, đặt hồ sơ ở việc Approve invoice, giao cho demo.</td>
+          </tr>
+          <tr>
+            <td>4. Làm việc được giao</td>
+            <td>Next.js, mục Việc cần làm. Chọn duyệt hoặc từ chối, rồi bấm Hoàn thành.</td>
+            <td>Đóng việc duyệt và ghi biến <code>approved</code>.</td>
+          </tr>
+          <tr>
+            <td>5. Engine tự rẽ</td>
+            <td>Không có nút chọn màn hình tiếp theo.</td>
+            <td><code>approved</code> là true thì sang Prepare bank transfer. Là false thì dừng ở Invoice rejected.</td>
+          </tr>
+          <tr>
+            <td>6. Kết thúc</td>
+            <td>Next.js, nhập mã chuyển khoản nếu được duyệt. Xem kết quả ở Hồ sơ hoặc Cockpit.</td>
+            <td>Đóng việc cuối, kết thúc ở Invoice paid. Danh sách việc hết dòng này. Lịch sử vẫn còn.</td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="note">Next.js là chỗ kế toán bấm. Operaton giữ quy trình và trạng thái. NestJS chỉ chuyển dữ liệu giữa hai bên, không tự chọn bước tiếp theo. Cockpit và Next.js đọc cùng một hồ sơ.</p>
+    </section>
+
+    <section>
+      <h2>4. Quy trình đã vẽ trong BPMN</h2>
+      <p>Nguồn form là các thẻ <code>operaton:formField</code> trong file <code>operaton-run/invoice-receipt.bpmn</code>. Sau khi deploy, Operaton giữ bản XML đó trong bảng <code>act_ge_bytearray</code>. Ô “Mã hồ sơ” trên màn hình Next.js là mã hồ sơ do ứng dụng thêm, không có trong file BPMN.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart TD
+  S["Nhận hóa đơn<br/>creditor, invoiceNumber, amount, category"] --> A["Approve invoice<br/>giao cho demo"]
+  A --> G{"approved ?"}
+  G -->|có| P["Prepare bank transfer<br/>paymentReference"]
+  G -->|không| R["Invoice rejected"]
+  P --> D["Invoice paid"]
+        </pre>
+      </div>
+      <table>
+        <thead>
+          <tr><th>Bước</th><th>Người làm</th><th>Dữ liệu ghi vào hồ sơ</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Nhận hóa đơn</td><td>Kế toán, trên Next.js</td><td>creditor, invoiceNumber, amount, category</td></tr>
+          <tr><td>Approve invoice</td><td>demo</td><td>approved, comment. Bốn trường trên chỉ đọc</td></tr>
+          <tr><td>Prepare bank transfer</td><td>demo, chỉ khi approved là true</td><td>paymentReference</td></tr>
+          <tr><td>Kết thúc</td><td>Operaton tự đi</td><td>Invoice paid hoặc Invoice rejected</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>5. Thao tác và luồng dữ liệu</h2>
+
+      <h3>Bước A. Đưa quy trình lên Operaton</h3>
+      <ol class="steps">
+        <li>Người thiết kế mở <code>invoice-receipt.bpmn</code> bằng Camunda Modeler, kiểm tra form và nhánh <code>${approved}</code>.</li>
+        <li>Deploy file lên Operaton, cổng 8080. Có thể gọi <code>POST /engine-rest/deployment/create</code>.</li>
+        <li>Operaton lưu XML và tạo định nghĩa quy trình <code>invoiceReceipt</code>.</li>
+      </ol>
+
+      <h3>Bước B. Kế toán mở hồ sơ trên Next.js</h3>
+      <ol class="steps">
+        <li>Mở http://localhost:3000/, chọn deployment <code>invoice-receipt</code>.</li>
+        <li>Điền Acme GmbH, INV-9001, 2500, Software. Mã hồ sơ cũng là INV-9001.</li>
+        <li>Bấm Mở hồ sơ. Việc “Approve invoice” hiện trong danh sách việc cần làm.</li>
+      </ol>
+      <div class="diagram">
+        <pre class="mermaid">
+sequenceDiagram
+  actor KT as Kế toán
+  participant Web as Next.js
+  participant Api as NestJS
+  participant Op as Operaton
+  participant DB as PostgreSQL
+  KT->>Web: Mở hồ sơ INV-9001
+  Web->>Api: POST /api/processes/start
+  Api->>Op: POST /process-definition/{id}/start
+  Op->>DB: Tạo hồ sơ và task Approve invoice
+  Api-->>Web: Mã hồ sơ vừa tạo
+  Web->>Api: GET /api/work
+  Api->>Op: Đọc task và biến
+  Op->>DB: act_ru_task, act_hi_varinst
+  Api-->>Web: Việc Approve invoice
+  Web-->>KT: Hiện form duyệt
+        </pre>
+      </div>
+      <p class="note">NestJS kiểm tra số tiền là số nguyên dương và hạng mục thuộc travel, office hoặc software trước khi gọi Operaton. Biến gửi đi có kiểu String, Long hoặc Boolean đúng như form BPMN.</p>
+
+      <h3>Bước C. Duyệt hóa đơn</h3>
+      <ol class="steps">
+        <li>Kế toán thấy chủ nợ, số hóa đơn, số tiền, hạng mục ở dạng chỉ đọc.</li>
+        <li>Giữ tick “Approve this invoice”, ghi chú “Đúng hợp đồng”, bấm Hoàn thành.</li>
+        <li>Operaton ghi <code>approved = true</code>, đóng task duyệt, đi nhánh có điều kiện và tạo task “Prepare bank transfer”.</li>
+      </ol>
+      <div class="diagram">
+        <pre class="mermaid">
+sequenceDiagram
+  actor KT as Kế toán
+  participant Web as Next.js
+  participant Api as NestJS
+  participant Op as Operaton
+  KT->>Web: Duyệt, ghi chú Đúng hợp đồng
+  Web->>Api: POST /api/tasks/{id}/complete
+  Api->>Op: Đọc task approveInvoice
+  Api->>Op: complete với approved và comment
+  Op->>Op: Gateway approved là true
+  Op-->>Api: Task Prepare bank transfer
+  Api-->>Web: Danh sách việc mới
+  Web-->>KT: Form mã chuyển khoản
+        </pre>
+      </div>
+      <p class="warn">Nếu bỏ tick duyệt, Operaton ghi approved là false và kết thúc ở Invoice rejected. Không có bước chuyển khoản.</p>
+
+      <h3>Bước D. Ghi chuyển khoản</h3>
+      <ol class="steps">
+        <li>Kế toán nhập mã CK-9001 và bấm Hoàn thành.</li>
+        <li>NestJS chỉ gửi trường <code>paymentReference</code>, vì creditor và amount là chỉ đọc.</li>
+        <li>Operaton đóng task và kết thúc hồ sơ ở “Invoice paid”.</li>
+      </ol>
+      <div class="diagram">
+        <pre class="mermaid">
+sequenceDiagram
+  actor KT as Kế toán
+  participant Web as Next.js
+  participant Api as NestJS
+  participant Op as Operaton
+  participant DB as PostgreSQL
+  KT->>Web: Mã CK-9001
+  Web->>Api: POST /api/tasks/{id}/complete
+  Api->>Op: complete với paymentReference
+  Op->>DB: Đóng task, kết thúc Invoice paid
+  Web->>Api: GET /api/work
+  Api->>Op: Đọc lịch sử hồ sơ
+  Op->>DB: act_hi_procinst, act_hi_varinst
+  Api-->>Web: Trạng thái Invoice paid
+  Web-->>KT: Hồ sơ đã thanh toán
+        </pre>
+      </div>
+    </section>
+
+    <section>
+      <h2>6. Dữ liệu còn lại sau khi xong</h2>
+      <p>Next.js và Cockpit của Operaton đọc cùng hồ sơ. Việc đang chạy nằm ở <code>act_ru_task</code>. Khi hồ sơ kết thúc, dòng đó hết. Lịch sử nằm ở các bảng <code>act_hi_*</code>.</p>
+      <table>
+        <thead>
+          <tr><th>Chỗ lưu</th><th>Nội dung của INV-9001</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><code>act_ge_bytearray</code></td><td>Bản XML của invoice-receipt.bpmn</td></tr>
+          <tr><td><code>act_ru_task</code></td><td>Trống, vì không còn việc mở</td></tr>
+          <tr><td><code>act_hi_procinst</code></td><td>Hồ sơ đã kết thúc, điểm cuối là Invoice paid</td></tr>
+          <tr><td><code>act_hi_varinst</code></td><td>Acme GmbH, INV-9001, 2500, software, approved = true, comment, CK-9001</td></tr>
+        </tbody>
+      </table>
+      <p>Kế toán xem kết quả trên Next.js, mục Hồ sơ. Người vận hành xem cùng hồ sơ trên Operaton tại http://localhost:8080/.</p>
+    </section>
+
+    <section>
+      <h2>7. Bảy mục trên thanh menu Operaton</h2>
+      <p>Thanh menu tại http://localhost:8080/ là bàn điều khiển. Sơ đồ và form được soạn ở Camunda Modeler, rồi đưa vào đây. Đăng nhập bằng <code>demo</code> / <code>demo</code>. Bảy mục, từ trái sang phải: Tasks, Processes, Decisions, Deployments, Batches, Migrations, Admin.</p>
+      <p>Ba thứ hay bị lẫn khi đọc các mục này:</p>
+      <ul>
+        <li><strong>Bản vẽ</strong> là định nghĩa quy trình, ví dụ Invoice Receipt. Nó mô tả các bước.</li>
+        <li><strong>Hồ sơ</strong> là một lần chạy bản vẽ đó. INV-9001 là một hồ sơ, với creditor, số tiền, và bước đang dừng.</li>
+        <li><strong>Việc</strong> là một bước đang chờ người. Trong hóa đơn, đó là Approve invoice hoặc Prepare bank transfer.</li>
+      </ul>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart TB
+  U["Người dùng demo"] --> Tasks["Tasks<br/>Việc đang chờ người"]
+  U --> Proc["Processes<br/>Bản vẽ và hồ sơ"]
+  U --> Dec["Decisions<br/>Bảng quyết định DMN"]
+  U --> Dep["Deployments<br/>File đã đưa vào"]
+  U --> Bat["Batches<br/>Lệnh chạy hàng loạt"]
+  U --> Mig["Migrations<br/>Chuyển hồ sơ sang bản mới"]
+  U --> Adm["Admin<br/>User, nhóm, quyền"]
+        </pre>
+      </div>
+
+      <h3>Tasks</h3>
+      <p>Đây là việc của người đang đăng nhập. Tài khoản <code>demo</code> thấy các user task được gán cho <code>demo</code>.</p>
+      <p>Danh sách bên trái là các việc chưa xong. <strong>All Tasks</strong> là mọi việc bạn có quyền xem. <strong>My Tasks</strong> là việc đã giao cho bạn. Mỗi dòng có tên việc, quy trình, phiên bản, ngày tạo, người giữ, mức ưu tiên và hạn.</p>
+      <p>Bấm một dòng thì bên phải có bốn tab:</p>
+      <table>
+        <thead><tr><th>Tab</th><th>Với hóa đơn INV-9001</th></tr></thead>
+        <tbody>
+          <tr><td>Form</td><td>Ô cần điền. Ở Approve invoice: creditor, số hóa đơn, số tiền, category ở dạng chỉ đọc, checkbox duyệt và comment. Bấm Complete Task là nộp form. Operaton lưu biến và đi tiếp theo mũi tên trong BPMN.</td></tr>
+          <tr><td>History</td><td>Ai đã nhận việc, gán lại, sửa hạn, hoàn thành.</td></tr>
+          <tr><td>Diagram</td><td>Sơ đồ, tô bước hiện tại.</td></tr>
+          <tr><td>Attachments</td><td>File đính kèm việc đó.</td></tr>
+        </tbody>
+      </table>
+      <p>Trên một việc có thể <strong>Claim</strong> để nhận việc chưa ai giữ, <strong>Unclaim</strong>, gán cho user khác, đặt hạn, đặt ngày theo dõi, và thêm nhóm được phép nhận việc.</p>
+      <p><strong>Start Process</strong> tạo hồ sơ mới. Chọn Invoice Receipt, nhập business key (mã hồ sơ, ví dụ <code>INV-9001</code>), điền form mở đầu, rồi start. Hồ sơ sinh ra một task Approve invoice và task đó xuất hiện trong danh sách này. Trên demo này, kế toán làm thao tác tương đương ở Next.js, cổng 3000.</p>
+
+      <h3>Processes</h3>
+      <p>Đây là nơi xem bản vẽ đã deploy và mọi hồ sơ đang chạy theo bản vẽ đó.</p>
+      <p>Danh sách là các process definition: tên, key <code>invoiceReceipt</code>, version, số hồ sơ đang chạy, số hồ sơ bị treo, số incident. Mỗi lần deploy lại cùng key, Operaton tăng version. Hồ sơ cũ tiếp tục chạy trên version lúc nó được mở.</p>
+      <p>Bấm một definition thì thấy sơ đồ và các mục con:</p>
+      <table>
+        <thead><tr><th>Mục</th><th>Mục đích</th></tr></thead>
+        <tbody>
+          <tr><td>Instances</td><td>Từng hồ sơ: business key, lúc bắt đầu, lúc kết thúc, thời gian chạy, người start, đang chạy hay đang tạm dừng. Vào một hồ sơ thì xem biến (creditor, amount, approved), các bước đã đi, user task, job, và audit log. Từ đây có thể tạm dừng, chạy lại, hoặc hủy hồ sơ.</td></tr>
+          <tr><td>Incidents</td><td>Chỗ quy trình bị kẹt vì lỗi, ví dụ một service task gọi class Java không có trong Operaton Run. Có message, bước bị lỗi, và nút Retry.</td></tr>
+          <tr><td>Jobs</td><td>Việc hẹn giờ hoặc việc nền của engine: hạn, số lần thử lại, stacktrace.</td></tr>
+          <tr><td>Called definitions</td><td>Quy trình con mà bản vẽ này gọi. Invoice Receipt không gọi quy trình con.</td></tr>
+        </tbody>
+      </table>
+      <p><strong>Suspend</strong> khóa một bản vẽ: không mở hồ sơ mới theo version đó. Có thể áp dụng luôn cho hồ sơ đang chạy.</p>
+
+      <h3>Decisions</h3>
+      <p>Đây là bảng quyết định DMN. Một bảng nhận dữ liệu vào và trả kết quả ra, ví dụ mức chiết khấu theo số tiền. Engine đánh giá bảng khi quy trình gặp một business rule task.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+  In["Số tiền hóa đơn"] --> T["Bảng DMN"]
+  T -->|dưới ngưỡng| K["Nhóm kế toán"]
+  T -->|từ ngưỡng trở lên| G["Nhóm giám đốc"]
+        </pre>
+      </div>
+      <p>Invoice Receipt không có bảng nào, nên mục này trống hoặc chỉ có bảng từ các file khác đã deploy. Khi có bảng, bạn xem định nghĩa, version, sơ đồ yêu cầu quyết định, và lịch sử mỗi lần bảng được đánh giá: giờ, giá trị đầu vào, giá trị đầu ra.</p>
+
+      <h3>Deployments</h3>
+      <p>Đây là kho file đã đưa vào engine. Mỗi lần deploy tạo một gói, gồm tên, thời điểm, và các file bên trong (<code>.bpmn</code>, <code>.dmn</code>, form). <code>invoice-receipt</code> là một gói như vậy. Mở gói, chọn file BPMN thì xem được sơ đồ, tên quy trình và số hồ sơ đã mở từ file đó. Có thể tải file về.</p>
+      <p><strong>Deploy</strong> tải file mới lên. Hai tùy chọn: bỏ qua nếu nội dung không đổi, và chỉ deploy những file thực sự thay đổi. Nút Deploy trên giao diện này không nhận file multipart ổn định. Cách chắc là gọi <code>POST /engine-rest/deployment/create</code>.</p>
+      <p>Xóa một deployment gỡ bản vẽ khỏi danh sách Processes. Nếu còn hồ sơ đang chạy, phải chọn thêm xóa cả hồ sơ và lịch sử thì engine mới cho xóa.</p>
+
+      <h3>Batches</h3>
+      <p>Đây là các lệnh hàng loạt mà engine chạy nền, từng mẻ, để không khóa cả hệ thống. Bạn theo dõi lệnh đã phát từ chỗ khác, ví dụ migrate vài trăm hồ sơ hoặc xóa hàng loạt hồ sơ cũ.</p>
+      <p>Một batch có mã, loại, tổng số job, số đã xong, số còn lại, số lỗi, người tạo, và trạng thái running hoặc suspended. Có thể tạm dừng, chạy tiếp, thử lại job lỗi, hoặc xóa batch để hủy phần còn lại. <strong>Show history</strong> xem các batch đã kết thúc. Chưa phát lệnh hàng loạt nào thì màn hình ghi không có batch đang chạy.</p>
+
+      <h3>Migrations</h3>
+      <p>Đây là chỗ chuyển hồ sơ đang chạy sang một version khác của cùng quy trình, khi bản vẽ đã đổi. Hồ sơ đã kết thúc không nằm trong danh sách. Chỉ hồ sơ còn đang chạy mới được chuyển.</p>
+      <div class="diagram">
+        <pre class="mermaid">
+flowchart LR
+  subgraph v1["Invoice Receipt v1"]
+    A1["Approve invoice"]
+  end
+  subgraph v2["Invoice Receipt v2"]
+    A2["Approve invoice"]
+  end
+  H["Hồ sơ đang dừng<br/>ở bước duyệt"] --> A1
+  A1 -.->|nối bước| A2
+        </pre>
+      </div>
+      <ol class="steps">
+        <li>Chọn bản nguồn và bản đích, ví dụ Invoice Receipt v1 và v2.</li>
+        <li>Nối từng bước của bản cũ sang bước của bản mới. Approve invoice của v1 trỏ sang Approve invoice của v2. Bước nào không còn trên bản mới thì để trống. Hồ sơ đang đứng ở bước đó không được chuyển.</li>
+        <li>Lọc hồ sơ cần chuyển: theo business key, đang chạy, đang lỗi, hoặc chọn từng hồ sơ. Bỏ trống là chuyển mọi hồ sơ khớp.</li>
+        <li>Chạy. <strong>Async</strong> tạo một batch và tiến độ nằm ở mục Batches. Có thể bỏ qua listener và mapping đầu vào, đầu ra nếu bản mới không còn các hook đó.</li>
+      </ol>
+
+      <h3>Admin</h3>
+      <p>Đây là danh tính và quyền. Dữ liệu hóa đơn không nằm ở mục này.</p>
+      <table>
+        <thead><tr><th>Mục</th><th>Mục đích</th></tr></thead>
+        <tbody>
+          <tr><td>Users</td><td>Tài khoản đăng nhập. <code>demo</code> là user có sẵn. Tạo user gồm id, họ tên, email, mật khẩu. Có thể đổi mật khẩu, mở khóa tài khoản bị khóa sau nhiều lần đăng nhập sai, và xóa user.</td></tr>
+          <tr><td>Groups</td><td>Nhóm, ví dụ <code>accounting</code>. Gán một user task cho nhóm thì mọi thành viên đều nhận được việc đó trong Tasks.</td></tr>
+          <tr><td>Tenants</td><td>Tách dữ liệu khi một engine phục vụ nhiều đơn vị. Mỗi tenant có user và group riêng. Deployment có thể gắn một tenant, và user chỉ thấy quy trình của tenant mình. Bản đang chạy không dùng tenant.</td></tr>
+          <tr><td>Authorizations</td><td>Quyền ALLOW hoặc DENY trên từng loại tài nguyên: process definition, process instance, task, deployment, batch, decision, filter, user, group. Cấp cho một user hoặc một group, trên một id cụ thể hoặc trên mọi id.</td></tr>
+          <tr><td>System</td><td>Phiên bản Operaton, database PostgreSQL, JDK và thông tin cài đặt.</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+  <script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "base",
+      securityLevel: "loose",
+      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif',
+      themeVariables: {
+        primaryColor: "#e8f6ee",
+        primaryTextColor: "#0f172a",
+        primaryBorderColor: "#008738",
+        lineColor: "#64748b",
+        secondaryColor: "#fff8e8",
+        tertiaryColor: "#ffffff",
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif'
+      }
+    });
+  </script>
+</body>
+</html>
